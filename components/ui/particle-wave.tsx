@@ -99,11 +99,23 @@ const ParticleWave: React.FC<ParticleWaveProps> = ({
 
     const scene = new THREE.Scene();
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      alpha: transparent,
-    });
+    // WebGL can be unavailable (hardware acceleration off, blocklisted GPU,
+    // headless browsers). Probe a throwaway canvas first so three.js doesn't
+    // log an error, and fall back to leaving the canvas empty — the parent's
+    // background shows through instead of the page crashing.
+    const probe = document.createElement("canvas");
+    if (!(probe.getContext("webgl2") || probe.getContext("webgl"))) return;
+
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: transparent,
+      });
+    } catch {
+      return;
+    }
     // Cap the pixel ratio: at 40k points a 3x ratio buys nothing visible and
     // costs a lot of fill rate.
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
