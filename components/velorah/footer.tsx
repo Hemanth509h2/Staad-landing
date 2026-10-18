@@ -1,25 +1,16 @@
 import Link from "next/link";
 
+import { FOUNDERS, telHref } from "@/lib/site";
+
 import { Wordmark } from "./primitives";
 
 const FOOTER_LINKS = [
-  { label: "Platform", href: "#platform" },
-  { label: "How it works", href: "#how-it-works" },
-  { label: "Modules", href: "#modules" },
-  { label: "Conditions", href: "#conditions" },
-  { label: "Company", href: "#company" },
-  { label: "Collaborations", href: "#collaborations" },
-];
-
-const FOUNDERS = [
-  {
-    name: "Om Kumar Gupta",
-    phone: "+91-8789418998",
-  },
-  {
-    name: "Ananya Dixit",
-    phone: "+91-8889978781",
-  },
+  { label: "Platform", href: "/#platform" },
+  { label: "How it works", href: "/#how-it-works" },
+  { label: "Modules", href: "/#modules" },
+  { label: "Conditions", href: "/#conditions" },
+  { label: "Company", href: "/#company" },
+  { label: "Collaborations", href: "/#collaborations" },
 ];
 
 function ColumnLabel({ children }: { children: React.ReactNode }) {
@@ -66,17 +57,22 @@ export function Footer() {
           <ColumnLabel>Founders</ColumnLabel>
           <ul className="space-y-2">
             {FOUNDERS.map((founder) => (
-              <li key={founder.name}>
+              <li
+                key={founder.name}
+                className="-mx-3 flex flex-col rounded-xl px-3 py-2 transition-colors hover:bg-white/5"
+              >
+                <span className="text-sm text-foreground">{founder.name}</span>
                 <a
-                  href={`tel:${founder.phone.replace(/[^+\d]/g, "")}`}
-                  className="group -mx-3 flex flex-col rounded-xl px-3 py-2 transition-colors hover:bg-white/5"
+                  href={telHref(founder.phone)}
+                  className="text-xs text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  <span className="text-sm text-foreground">
-                    {founder.name}
-                  </span>
-                  <span className="text-xs text-muted-foreground transition-colors group-hover:text-foreground">
-                    {founder.phone}
-                  </span>
+                  {founder.phone}
+                </a>
+                <a
+                  href={`mailto:${founder.email}`}
+                  className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {founder.email}
                 </a>
               </li>
             ))}
@@ -89,12 +85,12 @@ export function Footer() {
           <Wordmark className="text-xl" />
         </Link>
         <div className="flex items-center gap-6">
-          <a href="#" className="transition-colors hover:text-foreground">
+          <Link href="/privacy" className="transition-colors hover:text-foreground">
             Privacy Policy
-          </a>
-          <a href="#" className="transition-colors hover:text-foreground">
+          </Link>
+          <Link href="/terms" className="transition-colors hover:text-foreground">
             Terms &amp; Conditions
-          </a>
+          </Link>
         </div>
       </div>
     </footer>
