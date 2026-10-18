@@ -11,11 +11,6 @@ const COMPANY_VIDEO =
 
 const FOUNDERS = [
   {
-    name: "Om Kumar Gupta",
-    role: "Co-founder",
-    body: "Specialises in AI development for real-world impact, and leads the engineering behind Staad's real-time session platform.",
-  },
-  {
     name: "Ananya Dixit",
     role: "Co-founder",
     body: "Electronics & Communication Engineering student researching technology's role in accessible mental health, and shapes Staad's clinical direction.",
@@ -27,6 +22,9 @@ type Collaborator = {
   role?: string;
   body: string;
   logo?: string;
+  /** Shows a large photo frame instead of the small logo tile. */
+  portrait?: boolean;
+  photo?: string;
 };
 
 type CollaboratorGroup = {
@@ -75,6 +73,19 @@ const COLLABORATOR_GROUPS: CollaboratorGroup[] = [
       },
     ],
   },
+  {
+    heading: "On-board therapist",
+    members: [
+      // Placeholder: replace with the therapist's name and a line on their work.
+      {
+        name: "Therapist Name",
+        role: "Therapist",
+        body: "Worked alongside the team to build Staad, bringing hands-on therapy practice to how sessions run.",
+        portrait: true,
+        // photo: "/team/therapist.jpg",
+      },
+    ],
+  },
 ];
 
 function Monogram({ name }: { name: string }) {
@@ -91,6 +102,39 @@ function Monogram({ name }: { name: string }) {
       className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-border text-lg text-muted-foreground [font-family:var(--font-velorah-serif)]"
     >
       {initials}
+    </div>
+  );
+}
+
+function PortraitFrame({ name, photo }: { name: string; photo?: string }) {
+  if (photo) {
+    return (
+      <div className="relative aspect-[4/5] w-full shrink-0 overflow-hidden rounded-xl sm:w-56">
+        <Image
+          src={photo}
+          alt={name}
+          fill
+          sizes="(min-width: 640px) 224px, 100vw"
+          className="object-cover"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex aspect-[4/5] w-full shrink-0 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-white/20 text-muted-foreground sm:w-56">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.25}
+        className="h-12 w-12"
+      >
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" />
+      </svg>
+      <span className="text-[10px] uppercase tracking-[0.2em]">Photo</span>
     </div>
   );
 }
@@ -114,8 +158,8 @@ export function CompanySection() {
         />
       </PageBackdrop>
 
-      <Section eyebrow="Founders" title="Built by two people.">
-        <div className="grid gap-4 md:grid-cols-2">
+      <Section eyebrow="Founder" title="Who's building Staad.">
+        <div className="grid max-w-xl gap-4">
           {FOUNDERS.map((founder) => (
             <article
               key={founder.name}
@@ -149,42 +193,73 @@ export function CompanySection() {
                 {group.heading}
               </h3>
 
-              <div className={cn("grid gap-3", GROUP_COLUMNS[group.members.length])}>
-                {group.members.map((collaborator) => (
-                  <article
-                    key={collaborator.name}
-                    className="flex h-full items-start gap-4 rounded-2xl border border-border bg-card p-5 transition-colors hover:border-white/25"
-                  >
-                    {collaborator.logo ? (
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white p-2">
-                        <Image
-                          src={collaborator.logo}
-                          alt={`${collaborator.name} logo`}
-                          width={200}
-                          height={200}
-                          sizes="56px"
-                          className="h-full w-full object-contain"
-                        />
-                      </div>
-                    ) : (
-                      <Monogram name={collaborator.name} />
-                    )}
+              <div
+                className={cn(
+                  "grid gap-3",
+                  GROUP_COLUMNS[group.members.length],
+                )}
+              >
+                {group.members.map((collaborator) =>
+                  collaborator.portrait ? (
+                    <article
+                      key={collaborator.name}
+                      className="flex h-full flex-col gap-6 rounded-2xl border border-border bg-card p-5 transition-colors hover:border-white/25 sm:flex-row sm:items-center"
+                    >
+                      <PortraitFrame
+                        name={collaborator.name}
+                        photo={collaborator.photo}
+                      />
 
-                    <div className="min-w-0">
-                      <h4 className="text-base tracking-[-0.3px] text-foreground [font-family:var(--font-velorah-serif)]">
-                        {collaborator.name}
-                      </h4>
-                      {collaborator.role ? (
-                        <p className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                          {collaborator.role}
+                      <div className="min-w-0">
+                        <h4 className="text-xl tracking-[-0.5px] text-foreground [font-family:var(--font-velorah-serif)] sm:text-2xl">
+                          {collaborator.name}
+                        </h4>
+                        {collaborator.role ? (
+                          <p className="mt-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                            {collaborator.role}
+                          </p>
+                        ) : null}
+                        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                          {collaborator.body}
                         </p>
-                      ) : null}
-                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                        {collaborator.body}
-                      </p>
-                    </div>
-                  </article>
-                ))}
+                      </div>
+                    </article>
+                  ) : (
+                    <article
+                      key={collaborator.name}
+                      className="flex h-full items-start gap-4 rounded-2xl border border-border bg-card p-5 transition-colors hover:border-white/25"
+                    >
+                      {collaborator.logo ? (
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white p-2">
+                          <Image
+                            src={collaborator.logo}
+                            alt={`${collaborator.name} logo`}
+                            width={200}
+                            height={200}
+                            sizes="56px"
+                            className="h-full w-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <Monogram name={collaborator.name} />
+                      )}
+
+                      <div className="min-w-0">
+                        <h4 className="text-base tracking-[-0.3px] text-foreground [font-family:var(--font-velorah-serif)]">
+                          {collaborator.name}
+                        </h4>
+                        {collaborator.role ? (
+                          <p className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                            {collaborator.role}
+                          </p>
+                        ) : null}
+                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                          {collaborator.body}
+                        </p>
+                      </div>
+                    </article>
+                  ),
+                )}
               </div>
             </div>
           ))}

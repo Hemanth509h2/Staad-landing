@@ -13,6 +13,9 @@ const FOOTER_LINKS = [
   { label: "Collaborations", href: "/#collaborations" },
 ];
 
+// Om is still a legal-page contact in FOUNDERS but is not listed in the footer.
+const FOOTER_FOUNDERS = FOUNDERS.filter((founder) => founder.name !== "Om Kumar Gupta");
+
 function ColumnLabel({ children }: { children: React.ReactNode }) {
   return (
     <p className="mb-5 text-xs uppercase tracking-[0.3em] text-muted-foreground">
@@ -54,9 +57,9 @@ export function Footer() {
         </nav>
 
         <div>
-          <ColumnLabel>Founders</ColumnLabel>
+          <ColumnLabel>Founder</ColumnLabel>
           <ul className="space-y-2">
-            {FOUNDERS.map((founder) => (
+            {FOOTER_FOUNDERS.map((founder) => (
               <li
                 key={founder.name}
                 className="-mx-3 flex flex-col rounded-xl px-3 py-2 transition-colors hover:bg-white/5"
